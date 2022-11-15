@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            - DATABASE_URL=postgresql://user:pass@postgres_db:5432/my_db
+            - SUPERTOKENS_CONNECTION_URI=http://supertokens_core:3567
+            - SUPERTOKENS_WEBSITE_DOMAIN=http://localhost:3001
+            - SUPERTOKENS_API_DOMAIN=http://localhost:8001
+            - SUPERTOKENS_API_KEY=my-super-secret-api-key
+            - SUPERTOKENS_WEBSITE_BASE_PATH=/
+            - DB_ECHO_LOG=1
+        ports:
+            - "8001:8080"
+
+    postgres_db:
+        image: bitnami/postgresql:latest
+        environment:
+            - POSTGRESQL_USERNAME=user
+            - POSTGRESQL_PASSWORD=pass
+            - POSTGRESQL_DATABASE=my_db
+        ports:
+            - "5434:5432"
+
+    supertokens_core:
+        image: registry.supertokens.io/supertokens/supertokens-postgresql:4.1
+        environment:
+            - API_KEYS=my-super-secret-api-key
+            - DISABLE_TELEMETRY=true
+            - POSTGRESQL_USER=my_user
+            - POSTGRESQL_PASSWORD=password123
+            - POSTGRESQL_DATABASE_NAME=my_database
+            - POSTGRESQL_HOST=supertokens_postgres
+            - POSTGRESQL_PORT=5432
+
+    supertokens_postgres:
+        image: bitnami/postgresql:latest
+        environment:
+            - POSTGRESQL_USERNAME=my_user
+            - POSTGRESQL_PASSWORD=password123
+            - POSTGRESQL_DATABASE=my_database

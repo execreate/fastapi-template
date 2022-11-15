@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+    postgres_db:
+        image: bitnami/postgresql:latest
+        environment:
+            - POSTGRESQL_USERNAME=user
+            - POSTGRESQL_PASSWORD=pass
+            - POSTGRESQL_DATABASE=my_db
+        ports:
+            - "5434:5432"
+
+    supertokens_core:
+        image: registry.supertokens.io/supertokens/supertokens-postgresql:4.1
+        environment:
+            - API_KEYS=my-super-secret-api-key
+            - DISABLE_TELEMETRY=true
+            - POSTGRESQL_USER=my_user
+            - POSTGRESQL_PASSWORD=password123
+            - POSTGRESQL_DATABASE_NAME=my_database
+            - POSTGRESQL_HOST=supertokens_postgres
+            - POSTGRESQL_PORT=5432
+        ports:
+            -   "3567:3567"
+
+    supertokens_postgres:
+        image: bitnami/postgresql:latest
+        environment:
+            - POSTGRESQL_USERNAME=my_user
+            - POSTGRESQL_PASSWORD=password123
+            - POSTGRESQL_DATABASE=my_database

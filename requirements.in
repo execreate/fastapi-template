@@ -1,0 +1,12 @@
+fastapi[all]
+pydantic[email]
+supertokens_python
+gunicorn
+uvicorn[standard]
+sqlalchemy[asyncio]
+asyncpg
+tenacity
+alembic
+psycopg2
+factory-boy
+pytest-asyncio
