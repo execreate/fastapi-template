@@ -3,10 +3,6 @@ from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.utils import get_openapi
 from starlette.middleware.cors import CORSMiddleware
 
-from supertokens_python.framework.fastapi import get_middleware
-from supertokens_python import get_all_cors_headers
-
-from core.supertokens import init_supertokens
 from core.config import settings
 from api.dependencies.docs_security import basic_http_credentials
 
@@ -32,11 +28,6 @@ app = FastAPI(
     redoc_url=None,
     openapi_url=None,
 )
-
-if settings.SUPERTOKENS_CONNECTION_URI is not None:
-    init_supertokens(settings.PROJECT_NAME)
-    app.add_middleware(get_middleware())
-
 
 # include routes here
 app.include_router(v1.api_router)
@@ -76,11 +67,10 @@ async def shutdown_db_engine():
     await engine.dispose()
 
 
-if settings.SUPERTOKENS_CONNECTION_URI is not None:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.BACKEND_CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
-        allow_headers=["Content-Type", "Accept-Language"] + get_all_cors_headers(),
-    )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Accept-Language"],
+)

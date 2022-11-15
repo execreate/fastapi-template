@@ -20,13 +20,6 @@ class GlobalSettings(BaseSettings):
     DOCS_USERNAME: str = "docs_user"
     DOCS_PASSWORD: str = "simple_password"
 
-    SUPERTOKENS_CONNECTION_URI: AnyHttpUrl | None = None
-    SUPERTOKENS_WEBSITE_DOMAIN: AnyHttpUrl | None = None
-    SUPERTOKENS_API_DOMAIN: AnyHttpUrl | None = None
-    SUPERTOKENS_API_KEY: str | None = None
-    SUPERTOKENS_API_BASE_PATH: str = "/auth"
-    SUPERTOKENS_WEBSITE_BASE_PATH: str = "/"
-
     BACKEND_CORS_ORIGINS: Set[AnyHttpUrl] = set()
 
     ENVIRONMENT: EnvironmentEnum

@@ -1,6 +1,5 @@
 fastapi[all]
 pydantic[email]
-supertokens_python
 gunicorn
 uvicorn[standard]
 sqlalchemy[asyncio]

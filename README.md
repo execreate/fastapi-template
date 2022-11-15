@@ -1,7 +1,8 @@
-# FastAPI + Supertokens template
+# FastAPI template
 
-A simple starting point for your [FastAPI](https://fastapi.tiangolo.com) application that uses
-[Supertokens](https://supertokens.com) for user auth.
+A simple starting point for your [FastAPI](https://fastapi.tiangolo.com) application.
+If you need user auth, check out [another version of this template](https://github.com/execreate/fastapi-supertokens-template)
+with [Supertokens](https://supertokens.com) integration.
 
 ## About
 
