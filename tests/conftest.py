@@ -1,4 +1,4 @@
-import os
+from .setup_env import *  # noqa: setup test env
 import asyncio
 import pytest_asyncio
 from fastapi import FastAPI
@@ -7,9 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Generator, Callable
 
 from db.session import async_session, engine
-
-
-os.environ.setdefault("ENVIRONMENT", "test")
 
 
 @pytest_asyncio.fixture(scope="session")
