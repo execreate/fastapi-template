@@ -20,6 +20,7 @@ class GlobalSettings(BaseSettings):
     DOCS_USERNAME: str = "docs_user"
     DOCS_PASSWORD: str = "simple_password"
 
+    TRUSTED_HOSTS: Set[AnyHttpUrl] = {"app", "localhost", "0.0.0.0"}
     BACKEND_CORS_ORIGINS: Set[AnyHttpUrl] = set()
 
     ENVIRONMENT: EnvironmentEnum

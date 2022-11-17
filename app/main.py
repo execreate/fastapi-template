@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.utils import get_openapi
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
 from core.config import settings
@@ -28,6 +29,8 @@ app = FastAPI(
     redoc_url=None,
     openapi_url=None,
 )
+
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.TRUSTED_HOSTS)
 
 # include routes here
 app.include_router(v1.api_router)
