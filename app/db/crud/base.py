@@ -56,6 +56,7 @@ class BaseCrud(
         :return: None
         """
         if settings.ENVIRONMENT == EnvironmentEnum.TEST:
+            await self._db_session.flush()
             return
 
         await self._db_session.commit()

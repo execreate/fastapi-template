@@ -3,10 +3,34 @@ import asyncio
 import pytest_asyncio
 from fastapi import FastAPI
 from httpx import AsyncClient
+from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Generator, Callable
-
+from core.config import settings
+from main import shutdown_app
+from db.base import Base
 from db.session import async_session, engine
+from .utils import run_sync
+
+
+@pytest_asyncio.fixture(scope="session", autouse=True)
+def setup_test_env(request):
+    sync_engine = create_engine(
+        settings.DATABASE_URL,
+        echo=True,
+    )
+
+    with sync_engine.begin() as conn:
+        Base.metadata.drop_all(bind=conn)
+        Base.metadata.create_all(bind=conn)
+
+    def db_finalizer():
+        with sync_engine.begin() as conn_:
+            Base.metadata.drop_all(bind=conn_)
+
+        run_sync(shutdown_app())
+
+    request.addfinalizer(db_finalizer)
 
 
 @pytest_asyncio.fixture(scope="session")

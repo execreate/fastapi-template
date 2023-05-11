@@ -65,7 +65,7 @@ async def get_redoc_documentation():
 
 
 @app.on_event("shutdown")
-async def shutdown_db_engine():
+async def shutdown_app():
     await engine.dispose()
 
 
