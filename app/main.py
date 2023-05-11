@@ -14,12 +14,12 @@ from api import v1
 description = """
 FastAPI template project 🚀
 """
-
+version = "v0.0.1"
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description=description,
-    version="v0.0.1",
+    version=version,
     contact={
         "name": "Jorilla Abdullaev",
         "url": "https://jorilla.t.me",
@@ -39,11 +39,10 @@ app.include_router(v1.api_router)
 @app.get("/openapi.json", include_in_schema=False)
 async def openapi(_: str = Depends(basic_http_credentials)):
     schema = get_openapi(
-        title=app.title,
-        description=app.description,
-        version=app.version,
-        contact=app.contact,
+        title=settings.PROJECT_NAME + " | API Documentation",
+        description=description,
         routes=app.routes,
+        version=version,
     )
     # schema["info"]["x-logo"] = {
     #     "url": "https://YOUR_WEBSITE/logo.svg",

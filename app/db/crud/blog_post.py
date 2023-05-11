@@ -1,7 +1,7 @@
 from typing import Type
 
 from sqlalchemy import desc
-from sqlalchemy.orm import InstrumentedAttribute
+from sqlalchemy.sql.elements import UnaryExpression
 
 from db.crud.base import BaseCrud
 from db.tables.blog_post import BlogPost
@@ -31,7 +31,7 @@ class BlogPostCrud(
         return BlogPostSchema
 
     @property
-    def _order_by(self) -> InstrumentedAttribute:
+    def _order_by(self) -> UnaryExpression:
         return desc(BlogPost.created_at)
 
     @property

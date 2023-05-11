@@ -1,41 +1,38 @@
-FROM python:3.10.8-bullseye as builder
+FROM python:3.10-bullseye as base
 
-WORKDIR /build
+# Set environment variables
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONFAULTHANDLER 1
+
+FROM base as builder
 
 # install dependencies
 RUN apt-get update
-RUN apt-get install -y gcc musl-dev libpq-dev libffi-dev zlib1g-dev g++ libev-dev git build-essential
+RUN apt-get install -y gcc musl-dev libpq-dev libffi-dev zlib1g-dev g++ libev-dev git build-essential \
+    libev4 ca-certificates mailcap debian-keyring debian-archive-keyring apt-transport-https
 
 RUN pip3 install -U pip
+RUN pip3 install pipenv=="2023.4.20"
 
-COPY ./requirements.txt ./
-RUN pip3 wheel \
-		--no-cache-dir \
-		--wheel-dir wheels \
-		-r requirements.txt
+COPY Pipfile .
+COPY Pipfile.lock .
 
-FROM python:3.10.8-bullseye
+RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
-# Set environment variables.
-ENV PYTHONWRITEBYTECODE 1
-ENV PYTHONBUFFERED 1
-
-COPY --from=builder /build/wheels /wheels
-
-RUN apt-get update
-RUN apt-get install -y libev4 ca-certificates mailcap debian-keyring debian-archive-keyring apt-transport-https
+FROM base as runtime
 
 WORKDIR /usr/src/app/
+
+COPY --from=builder /.venv /.venv
+ENV PATH="/.venv/bin:$PATH"
 
 RUN groupadd -g 1000 app && \
     useradd -r -u 1000 -g app app
 
 RUN mkdir "/home/app"
 RUN	chown -R app:app /home/app
-RUN	chown -R app:app /wheels
-
-RUN pip install -U pip
-RUN pip install --no-cache /wheels/*
 
 COPY ./app /usr/src/app/
 RUN	chown -R app:app /usr/src/app/
