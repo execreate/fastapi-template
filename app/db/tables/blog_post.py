@@ -1,8 +1,8 @@
-from sqlalchemy import Column, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base_class import TimestampedBase
 
 
 class BlogPost(TimestampedBase):
-    title = Column(String, nullable=False)
-    body = Column(String, nullable=False)
+    title: Mapped[str] = mapped_column(nullable=False)
+    body: Mapped[str] = mapped_column(nullable=False)

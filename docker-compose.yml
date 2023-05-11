@@ -17,5 +17,3 @@ services:
             - POSTGRESQL_USERNAME=user
             - POSTGRESQL_PASSWORD=pass
             - POSTGRESQL_DATABASE=my_db
-        ports:
-            - "5434:5432"

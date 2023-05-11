@@ -44,5 +44,5 @@ def app_(override_get_session: Callable) -> FastAPI:
 
 @pytest_asyncio.fixture(scope="function")
 async def async_client(app_: FastAPI) -> AsyncClient:
-    async with AsyncClient(app=app_, base_url="http://test") as client:
+    async with AsyncClient(app=app_, base_url="http://localhost") as client:
         yield client

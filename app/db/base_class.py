@@ -1,16 +1,18 @@
+import datetime
 import uuid
 
-from sqlalchemy import Column, DateTime, func
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy import func, DateTime
+from sqlalchemy.orm import as_declarative, declared_attr, mapped_column, Mapped
 
 
 @as_declarative()
 class TimestampedBase:
-    id: uuid.UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    created_at = Column(DateTime(), nullable=False, server_default=func.now())
-    modified_at = Column(
-        DateTime(), nullable=False, server_default=func.now(), onupdate=func.now()
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=False), nullable=False, server_default=func.now()
+    )
+    modified_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now()
     )
     __name__: str
 
@@ -18,6 +20,6 @@ class TimestampedBase:
     __mapper_args__ = {"eager_defaults": True}
 
     # Generate __tablename__ automatically
-    @declared_attr
-    def __tablename__(self) -> str:
-        return self.__name__.lower()
+    @declared_attr.directive
+    def __tablename__(cls) -> str:
+        return cls.__name__.lower()
