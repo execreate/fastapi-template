@@ -29,7 +29,7 @@ and NOT like this:
 from app.core.config import settings
 ```
 
-### Develop
+### Local setup
 
 The following command will run a PostgreSQL database on your docker engine:
 ```shell
