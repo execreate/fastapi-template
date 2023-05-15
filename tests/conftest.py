@@ -9,7 +9,7 @@ from typing import Generator, Callable
 from core.config import settings
 from main import shutdown_app
 from db.base import Base
-from db.session import async_session, engine
+from db.session import async_session
 from .utils import run_sync
 
 
@@ -17,7 +17,7 @@ from .utils import run_sync
 def setup_test_env(request):
     sync_engine = create_engine(
         settings.DATABASE_URL,
-        echo=True,
+        echo=False,
     )
 
     with sync_engine.begin() as conn:
@@ -43,10 +43,9 @@ def event_loop(request) -> Generator:
 
 @pytest_asyncio.fixture(scope="function")
 async def db_session() -> AsyncSession:
-    async with engine.begin() as conn:
-        async with async_session(bind=conn) as session:
-            yield session
-            await session.rollback()
+    async with async_session() as session:
+        yield session
+        await session.rollback()
 
 
 @pytest_asyncio.fixture(scope="function")
