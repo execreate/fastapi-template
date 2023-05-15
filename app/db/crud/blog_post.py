@@ -8,7 +8,7 @@ from db.tables.blog_post import BlogPost
 from schemas.blog_post import (
     InBlogPostSchema,
     UpdateBlogPostSchema,
-    BlogPostSchema,
+    OutBlogPostSchema,
     PaginatedBlogPostSchema,
 )
 
@@ -17,7 +17,7 @@ class BlogPostCrud(
     BaseCrud[
         InBlogPostSchema,
         UpdateBlogPostSchema,
-        BlogPostSchema,
+        OutBlogPostSchema,
         PaginatedBlogPostSchema,
         BlogPost,
     ]
@@ -27,8 +27,8 @@ class BlogPostCrud(
         return BlogPost
 
     @property
-    def _schema(self) -> Type[BlogPostSchema]:
-        return BlogPostSchema
+    def _out_schema(self) -> Type[OutBlogPostSchema]:
+        return OutBlogPostSchema
 
     @property
     def _order_by(self) -> UnaryExpression:

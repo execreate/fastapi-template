@@ -14,7 +14,7 @@ from schemas.base import BaseSchema, BasePaginatedSchema
 from core.config import settings, EnvironmentEnum
 
 IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
-SCHEMA = TypeVar("SCHEMA", bound=BaseSchema)
+OUT_SCHEMA = TypeVar("OUT_SCHEMA", bound=BaseSchema)
 PARTIAL_UPDATE_SCHEMA = TypeVar("PARTIAL_UPDATE_SCHEMA", bound=BaseSchema)
 PAGINATED_SCHEMA = TypeVar("PAGINATED_SCHEMA", bound=BasePaginatedSchema)
 TABLE = TypeVar("TABLE")
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseCrud(
-    Generic[IN_SCHEMA, PARTIAL_UPDATE_SCHEMA, SCHEMA, PAGINATED_SCHEMA, TABLE],
+    Generic[IN_SCHEMA, PARTIAL_UPDATE_SCHEMA, OUT_SCHEMA, PAGINATED_SCHEMA, TABLE],
     metaclass=abc.ABCMeta,
 ):
     def __init__(self, db_session: AsyncSession, *args, **kwargs) -> None:
@@ -37,7 +37,7 @@ class BaseCrud(
 
     @property
     @abc.abstractmethod
-    def _schema(self) -> Type[SCHEMA]:
+    def _out_schema(self) -> Type[OUT_SCHEMA]:
         ...
 
     @property
@@ -61,21 +61,21 @@ class BaseCrud(
 
         await self._db_session.commit()
 
-    async def create(self, in_schema: IN_SCHEMA) -> SCHEMA:
+    async def create(self, in_schema: IN_SCHEMA) -> OUT_SCHEMA:
         entry = self._table(id=uuid4(), **in_schema.dict())
         self._db_session.add(entry)
         await self._db_session.flush()
-        return self._schema.from_orm(entry)
+        return self._out_schema.from_orm(entry)
 
-    async def get_by_id(self, entry_id: UUID) -> SCHEMA:
+    async def get_by_id(self, entry_id: UUID) -> OUT_SCHEMA:
         entry = await self._db_session.get(self._table, entry_id)
         if not entry:
             raise HTTPException(status_code=404, detail="Object not found")
-        return self._schema.from_orm(entry)
+        return self._out_schema.from_orm(entry)
 
     async def update_by_id(
         self, entry_id: UUID, in_data: PARTIAL_UPDATE_SCHEMA
-    ) -> SCHEMA:
+    ) -> OUT_SCHEMA:
         entry = await self._db_session.get(self._table, entry_id)
         if not entry:
             raise HTTPException(status_code=404, detail="Object not found")
@@ -83,7 +83,7 @@ class BaseCrud(
         for _k, _v in in_data_dict.items():
             setattr(entry, _k, _v)
         await self._db_session.flush()
-        return self._schema.from_orm(entry)
+        return self._out_schema.from_orm(entry)
 
     async def delete_by_id(self, entry_id: UUID) -> None:
         entry = await self._db_session.get(self._table, entry_id)
@@ -103,5 +103,5 @@ class BaseCrud(
         )
         return self._paginated_schema(
             total=total_count.scalar(),
-            items=[self._schema.from_orm(entry) for entry in entries],
+            items=[self._out_schema.from_orm(entry) for entry in entries],
         )

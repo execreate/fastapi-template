@@ -17,11 +17,11 @@ class InBlogPostSchema(BlogPostSchemaBase):
     ...
 
 
-class BlogPostSchema(BlogPostSchemaBase):
+class OutBlogPostSchema(BlogPostSchemaBase):
     id: UUID
     created_at: datetime
     modified_at: datetime
 
 
-class PaginatedBlogPostSchema(BasePaginatedSchema[BlogPostSchema]):
-    items: list[BlogPostSchema]
+class PaginatedBlogPostSchema(BasePaginatedSchema[OutBlogPostSchema]):
+    items: list[OutBlogPostSchema]

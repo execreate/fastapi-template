@@ -1,7 +1,7 @@
 import pytest
 import json
 from httpx import AsyncClient, QueryParams
-from schemas.blog_post import InBlogPostSchema, BlogPostSchema
+from schemas.blog_post import InBlogPostSchema, OutBlogPostSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 from .factory.blog_post_factory import BlogPostFactory
 from .utils import dicts_are_equal
@@ -66,7 +66,7 @@ async def test_retrieve_a_blog_post(
     response_data: dict = response.json()
 
     assert response.status_code == 200
-    assert BlogPostSchema.from_orm(post).json() == json.dumps(response_data)
+    assert OutBlogPostSchema.from_orm(post).json() == json.dumps(response_data)
 
 
 @pytest.mark.asyncio

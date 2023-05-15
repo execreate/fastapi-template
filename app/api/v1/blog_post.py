@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("", status_code=201, response_model=blog_post_schemas.BlogPostSchema)
+@router.post("", status_code=201, response_model=blog_post_schemas.OutBlogPostSchema)
 async def create_a_blog_post(
     blog_post: blog_post_schemas.InBlogPostSchema,
     db: DbSessionDep,
@@ -34,7 +34,7 @@ async def list_blog_posts(
 
 @router.get(
     "/{post_id}",
-    response_model=blog_post_schemas.BlogPostSchema,
+    response_model=blog_post_schemas.OutBlogPostSchema,
     responses={
         404: {
             "description": "Object not found",
@@ -51,7 +51,7 @@ async def retrieve_a_blog_post(
 
 @router.patch(
     "/{post_id}",
-    response_model=blog_post_schemas.BlogPostSchema,
+    response_model=blog_post_schemas.OutBlogPostSchema,
     responses={
         404: {
             "description": "Object not found",
