@@ -42,7 +42,7 @@ class BaseCrud(
 
     @property
     @abc.abstractmethod
-    def _order_by(self) -> InstrumentedAttribute:
+    def _default_ordering(self) -> InstrumentedAttribute:
         ...
 
     @property
@@ -93,9 +93,11 @@ class BaseCrud(
         await self._db_session.flush()
         return
 
-    async def get_paginated_list(self, limit: int, offset: int) -> PAGINATED_SCHEMA:
+    async def get_paginated_list(self, limit: int, offset: int, ordering=None) -> PAGINATED_SCHEMA:
+        if ordering is None:
+            ordering = self._default_ordering
         result: Result = await self._db_session.execute(
-            select(self._table).order_by(self._order_by).limit(limit).offset(offset)
+            select(self._table).order_by(ordering).limit(limit).offset(offset)
         )
         entries = result.scalars()
         total_count: Result = await self._db_session.execute(

@@ -1,6 +1,5 @@
 from typing import Type
 
-from sqlalchemy import desc
 from sqlalchemy.sql.elements import UnaryExpression
 
 from db.crud.base import BaseCrud
@@ -31,8 +30,8 @@ class BlogPostCrud(
         return OutBlogPostSchema
 
     @property
-    def _order_by(self) -> UnaryExpression:
-        return desc(BlogPost.created_at)
+    def _default_ordering(self) -> UnaryExpression:
+        return BlogPost.created_at.desc()
 
     @property
     def _paginated_schema(self) -> Type[PaginatedBlogPostSchema]:
