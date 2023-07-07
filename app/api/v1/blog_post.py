@@ -1,8 +1,7 @@
-from uuid import UUID
 from api.dependencies.database import DbSessionDep
+from api.dependencies.pagination import PaginationDep
 from fastapi import APIRouter, Response, status
 from schemas import blog_post as blog_post_schemas
-from schemas.pagination import PaginationDep
 from db.crud.blog_post import BlogPostCrud
 
 
@@ -42,7 +41,7 @@ async def list_blog_posts(
     },
 )
 async def retrieve_a_blog_post(
-    post_id: UUID,
+    post_id: int,
     db: DbSessionDep,
 ):
     crud = BlogPostCrud(db)
@@ -59,7 +58,7 @@ async def retrieve_a_blog_post(
     },
 )
 async def update_a_blog_post(
-    post_id: UUID,
+    post_id: int,
     blog_post: blog_post_schemas.UpdateBlogPostSchema,
     db: DbSessionDep,
 ):
@@ -79,7 +78,7 @@ async def update_a_blog_post(
     },
 )
 async def delete_a_blog_post(
-    post_id: UUID,
+    post_id: int,
     db: DbSessionDep,
 ):
     crud = BlogPostCrud(db)

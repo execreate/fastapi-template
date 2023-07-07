@@ -1,4 +1,3 @@
-from uuid import UUID
 from datetime import datetime
 from schemas.base import BaseSchema, BasePaginatedSchema
 
@@ -18,7 +17,7 @@ class InBlogPostSchema(BlogPostSchemaBase):
 
 
 class OutBlogPostSchema(BlogPostSchemaBase):
-    id: UUID
+    id: int
     created_at: datetime
     modified_at: datetime
 

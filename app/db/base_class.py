@@ -1,8 +1,8 @@
 import re
 import datetime
-import uuid
 
 from sqlalchemy import func
+from sqlalchemy.sql import expression
 from sqlalchemy.orm import as_declarative, declared_attr, mapped_column, Mapped
 from core.config import settings, EnvironmentEnum
 
@@ -17,12 +17,15 @@ def camel_to_snake(name):
 
 @as_declarative()
 class TimestampedBase:
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
         nullable=False, server_default=func.now()
     )
     modified_at: Mapped[datetime.datetime] = mapped_column(
         nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+    is_active: Mapped[bool] = mapped_column(
+        nullable=False, server_default=expression.true()
     )
     __name__: str
 
