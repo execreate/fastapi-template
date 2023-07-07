@@ -35,7 +35,8 @@ class TimestampedBase:
     # Generate __tablename__ automatically
     @declared_attr.directive
     def __tablename__(cls) -> str:
+        default_name = camel_to_snake(cls.__name__)
         if settings.ENVIRONMENT == EnvironmentEnum.TEST:
-            return f"test_{camel_to_snake(cls.__name__)}"
+            return f"test_{default_name}"
 
-        return camel_to_snake(cls.__name__)
+        return default_name
