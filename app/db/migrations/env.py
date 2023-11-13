@@ -9,7 +9,7 @@ from core.config import settings  # noqa
 from db.base import Base  # noqa
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
 target_metadata = Base.metadata
 
 fileConfig(config.config_file_name)

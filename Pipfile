@@ -18,6 +18,7 @@ psycopg2-binary = "*"
 factory-boy = "*"
 pytest-asyncio = "*"
 sqlalchemy2-stubs = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.10"

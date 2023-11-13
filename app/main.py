@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.utils import get_openapi
@@ -16,10 +17,16 @@ FastAPI template project 🚀
 """
 version = "v0.0.1"
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    await engine.dispose()
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description=description,
     version=version,
+    lifespan=lifespan,
     contact={
         "name": "Jorilla Abdullaev",
         "url": "https://jorilla.t.me",
@@ -62,11 +69,6 @@ async def get_redoc_documentation():
         title="FastAPI | Documentation",
         # redoc_favicon_url="https://YOUR_WEBSITE/favicon.ico",
     )
-
-
-@app.on_event("shutdown")
-async def shutdown_app():
-    await engine.dispose()
 
 
 app.add_middleware(

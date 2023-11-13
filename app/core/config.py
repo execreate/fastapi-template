@@ -3,7 +3,8 @@ from enum import Enum
 from functools import lru_cache
 from typing import Optional, Set
 
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn
+from pydantic import AnyHttpUrl, PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class EnvironmentEnum(str, Enum):
@@ -32,33 +33,31 @@ class GlobalSettings(BaseSettings):
     @property
     def async_database_url(self) -> Optional[str]:
         return (
-            self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+            str(self.DATABASE_URL).replace("postgresql://", "postgresql+asyncpg://")
             if self.DATABASE_URL
-            else self.DATABASE_URL
+            else str(self.DATABASE_URL)
         )
-
-    class Config:
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 class TestSettings(GlobalSettings):
-    DEBUG = True
-    ENVIRONMENT = EnvironmentEnum.TEST
+    DEBUG: bool = True
+    ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.TEST
 
 
 class DevelopSettings(GlobalSettings):
-    DEBUG = True
-    ENVIRONMENT = EnvironmentEnum.DEVELOP
+    DEBUG: bool = True
+    ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.DEVELOP
 
 
 class StagingSettings(GlobalSettings):
-    DEBUG = False
-    ENVIRONMENT = EnvironmentEnum.STAGING
+    DEBUG: bool = False
+    ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.STAGING
 
 
 class ProductionSettings(GlobalSettings):
-    DEBUG = False
-    ENVIRONMENT = EnvironmentEnum.PRODUCTION
+    DEBUG: bool = False
+    ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.PRODUCTION
 
 
 class FactoryConfig:

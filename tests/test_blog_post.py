@@ -1,5 +1,4 @@
 import pytest
-import json
 from httpx import AsyncClient, QueryParams
 from schemas.blog_post import InBlogPostSchema, OutBlogPostSchema
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,13 +14,13 @@ async def test_create_a_blog_post(async_client: AsyncClient):
     )
     response = await async_client.post(
         "/v1/blog",
-        json=blog_post_input.dict(),
+        json=blog_post_input.model_dump(),
     )
     response_data: dict = response.json()
 
     assert response.status_code == 201
     assert dicts_are_equal(
-        response_data, blog_post_input.dict(), for_keys={"title", "body"}
+        response_data, blog_post_input.model_dump(), for_keys={"title", "body"}
     )
 
 
@@ -64,9 +63,12 @@ async def test_retrieve_a_blog_post(
 
     response = await async_client.get(f"/v1/blog/{post.id}")
     response_data: dict = response.json()
+    returned_model = OutBlogPostSchema.model_validate(post)
 
     assert response.status_code == 200
-    assert OutBlogPostSchema.from_orm(post).json() == json.dumps(response_data)
+    assert returned_model.id == response_data["id"]
+    assert returned_model.title == response_data["title"]
+    assert returned_model.body == response_data["body"]
 
 
 @pytest.mark.asyncio

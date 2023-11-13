@@ -66,10 +66,10 @@ class BaseCrud(
         ...
 
     async def create(self, in_schema: IN_SCHEMA) -> OUT_SCHEMA:
-        entry = self._table(**in_schema.dict())
+        entry = self._table(**in_schema.model_dump())
         self._db_session.add(entry)
         await self._db_session.flush()
-        return self._out_schema.from_orm(entry)
+        return self._out_schema.model_validate(entry)
 
     async def get_by_id(self, entry_id, active_only=True) -> OUT_SCHEMA:
         result = await self._db_session.execute(
@@ -80,7 +80,7 @@ class BaseCrud(
         entry = result.scalar_one_or_none()
         if not entry:
             raise HTTPException(status_code=404, detail="Object not found")
-        return self._out_schema.from_orm(entry)
+        return self._out_schema.model_validate(entry)
 
     async def update_by_id(
         self, entry_id, in_data: PARTIAL_UPDATE_SCHEMA, active_only=True
@@ -93,11 +93,11 @@ class BaseCrud(
         entry = result.scalar_one_or_none()
         if not entry:
             raise HTTPException(status_code=404, detail="Object not found")
-        in_data_dict: dict = in_data.dict(exclude_unset=True)
+        in_data_dict: dict = in_data.model_dump(exclude_unset=True)
         for _k, _v in in_data_dict.items():
             setattr(entry, _k, _v)
         await self._db_session.flush()
-        return self._out_schema.from_orm(entry)
+        return self._out_schema.model_validate(entry)
 
     async def delete_by_id(self, entry_id, permanently=False) -> None:
         result = await self._db_session.execute(
@@ -138,5 +138,5 @@ class BaseCrud(
         )
         return self._paginated_schema(
             total=total_count.scalar(),
-            items=[self._out_schema.from_orm(entry) for entry in entries],
+            items=[self._out_schema.model_validate(entry) for entry in entries],
         )
