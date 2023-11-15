@@ -1,8 +1,8 @@
 import re
 import datetime
+from typing import Optional
 
 from sqlalchemy import func
-from sqlalchemy.sql import expression
 from sqlalchemy.orm import as_declarative, declared_attr, mapped_column, Mapped
 from core.config import settings, EnvironmentEnum
 
@@ -19,17 +19,17 @@ def camel_to_snake(name):
 class TimestampedBase:
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
-        nullable=False, server_default=func.now()
+        nullable=False, server_default=func.current_timestamp()
     )
-    modified_at: Mapped[datetime.datetime] = mapped_column(
-        nullable=False, server_default=func.now(), onupdate=func.now()
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        nullable=False, server_default=func.current_timestamp(), onupdate=func.current_timestamp()
     )
-    is_active: Mapped[bool] = mapped_column(
-        nullable=False, server_default=expression.true()
+    deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(
+        nullable=True, server_default=None
     )
     __name__: str
 
-    # so that created_at and modified_at columns can be accessed without querying the database
+    # so that created_at and updated_at columns can be accessed without querying the database
     __mapper_args__ = {"eager_defaults": True}
 
     # Generate __tablename__ automatically

@@ -10,13 +10,14 @@ from sqlalchemy.sql.elements import UnaryExpression
 from sqlalchemy.future import select
 from sqlalchemy.orm import InstrumentedAttribute
 from core.config import settings, EnvironmentEnum
+from db.base_class import TimestampedBase
 from schemas.base import BaseSchema, BasePaginatedSchema
 
 IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
 OUT_SCHEMA = TypeVar("OUT_SCHEMA", bound=BaseSchema)
 PARTIAL_UPDATE_SCHEMA = TypeVar("PARTIAL_UPDATE_SCHEMA", bound=BaseSchema)
 PAGINATED_SCHEMA = TypeVar("PAGINATED_SCHEMA", bound=BasePaginatedSchema)
-TABLE = TypeVar("TABLE")
+TABLE = TypeVar("TABLE", bound=TimestampedBase)
 
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ class BaseCrud(
 
     def get_active_statement(self, stmt: any, active_only: bool):
         if active_only:
-            return stmt.where(self._table.is_active)
+            return stmt.where(self._table.deleted_at.is_(None))
         return stmt
 
     @property
@@ -104,13 +105,13 @@ class BaseCrud(
             select(self._table).where(self._table.id == entry_id)
         )
         entry = result.scalar_one_or_none()
-        if not entry or (not entry.is_active and not permanently):
+        if not entry or (entry.deleted_at is not None and not permanently):
             raise HTTPException(status_code=404, detail="Object not found")
 
         if permanently:
             await self._db_session.delete(entry)
         else:
-            entry.is_active = False
+            entry.deleted_at = func.current_timestamp()
 
         await self._db_session.flush()
         return

@@ -19,7 +19,7 @@ class InBlogPostSchema(BlogPostSchemaBase):
 class OutBlogPostSchema(BlogPostSchemaBase):
     id: int
     created_at: datetime
-    modified_at: datetime
+    updated_at: datetime
 
 
 class PaginatedBlogPostSchema(BasePaginatedSchema[OutBlogPostSchema]):

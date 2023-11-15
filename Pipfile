@@ -8,16 +8,15 @@ fastapi = {extras = ["all"], version = "*"}
 pydantic = {extras = ["email"], version = "*"}
 gunicorn = "*"
 uvicorn = {extras = ["standard"], version = "*"}
-sqlalchemy = {extras = ["asyncio"], version = "*"}
 asyncpg = "*"
 tenacity = "*"
 alembic = "*"
 psycopg2-binary = "*"
+sqlalchemy = {extras = ["asyncio"], version = "*"}
 
 [dev-packages]
 factory-boy = "*"
 pytest-asyncio = "*"
-sqlalchemy2-stubs = "*"
 ruff = "*"
 
 [requires]
