@@ -8,4 +8,6 @@ class LimitOffsetPaginationParams:
         self.offset = offset
 
 
-PaginationDep = Annotated[LimitOffsetPaginationParams, Depends(LimitOffsetPaginationParams)]
+PaginationDep = Annotated[
+    LimitOffsetPaginationParams, Depends(LimitOffsetPaginationParams)
+]

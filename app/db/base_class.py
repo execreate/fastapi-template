@@ -22,7 +22,9 @@ class TimestampedBase:
         nullable=False, server_default=func.current_timestamp()
     )
     updated_at: Mapped[datetime.datetime] = mapped_column(
-        nullable=False, server_default=func.current_timestamp(), onupdate=func.current_timestamp()
+        nullable=False,
+        server_default=func.current_timestamp(),
+        onupdate=func.current_timestamp(),
     )
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(
         nullable=True, server_default=None

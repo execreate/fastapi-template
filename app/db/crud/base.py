@@ -79,7 +79,10 @@ class BaseCrud(
     async def get_by_id(self, entry_id, active_only=True) -> OUT_SCHEMA:
         result = await self._db_session.execute(
             self.get_active_statement(
-                select(*self.out_schema_columns).select_from(self._table).where(self._table.id == entry_id), active_only
+                select(*self.out_schema_columns)
+                .select_from(self._table)
+                .where(self._table.id == entry_id),
+                active_only,
             )
         )
         entry = result.scalar_one_or_none()
@@ -130,7 +133,9 @@ class BaseCrud(
         if order_by is None:
             order_by = self.default_ordering
         result: Result = await self._db_session.execute(
-            self.get_active_statement(select(*self.out_schema_columns).select_from(self._table), active_only)
+            self.get_active_statement(
+                select(*self.out_schema_columns).select_from(self._table), active_only
+            )
             .order_by(order_by)
             .limit(limit)
             .offset(offset)

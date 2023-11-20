@@ -37,6 +37,7 @@ class GlobalSettings(BaseSettings):
             if self.DATABASE_URL
             else str(self.DATABASE_URL)
         )
+
     model_config = SettingsConfigDict(case_sensitive=True)
 
 

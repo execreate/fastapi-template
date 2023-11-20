@@ -17,10 +17,12 @@ FastAPI template project 🚀
 """
 version = "v0.0.1"
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
     await engine.dispose()
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
