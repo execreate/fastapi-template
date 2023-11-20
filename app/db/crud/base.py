@@ -3,7 +3,7 @@ import logging
 from typing import Generic, TypeVar, Type
 from fastapi import HTTPException
 
-from sqlalchemy import func, column, ColumnClause
+from sqlalchemy import func, column, ColumnClause, update, delete
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.elements import UnaryExpression
@@ -41,7 +41,7 @@ class BaseCrud(
 
         await self._db_session.commit()
 
-    def get_active_statement(self, stmt: any, active_only: bool):
+    def apply_active_statement(self, stmt: any, active_only: bool):
         if active_only:
             return stmt.where(self._table.deleted_at.is_(None))
         return stmt
@@ -78,47 +78,41 @@ class BaseCrud(
 
     async def get_by_id(self, entry_id, active_only=True) -> OUT_SCHEMA:
         result = await self._db_session.execute(
-            self.get_active_statement(
+            self.apply_active_statement(
                 select(*self.out_schema_columns)
                 .select_from(self._table)
                 .where(self._table.id == entry_id),
                 active_only,
             )
         )
-        entry = result.scalar_one_or_none()
+        entry = result.first()
         if not entry:
             raise HTTPException(status_code=404, detail="Object not found")
         return self._out_schema.model_validate(entry)
 
     async def update_by_id(
-        self, entry_id, in_data: PARTIAL_UPDATE_SCHEMA, active_only=True
-    ) -> OUT_SCHEMA:
+        self, entry_id, in_data: PARTIAL_UPDATE_SCHEMA, active_only=True, raise_404=True
+    ) -> None:
         result = await self._db_session.execute(
-            self.get_active_statement(
-                select(self._table).where(self._table.id == entry_id), active_only
-            )
+            self.apply_active_statement(
+                update(self._table).where(self._table.id == entry_id), active_only
+            ).values(**in_data.model_dump(exclude_unset=True))
         )
-        entry = result.scalar_one_or_none()
-        if not entry:
+        if result.rowcount == 0 and raise_404:
             raise HTTPException(status_code=404, detail="Object not found")
-        in_data_dict: dict = in_data.model_dump(exclude_unset=True)
-        for _k, _v in in_data_dict.items():
-            setattr(entry, _k, _v)
         await self._db_session.flush()
-        return self._out_schema.model_validate(entry)
+        return
 
-    async def delete_by_id(self, entry_id, permanently=False) -> None:
-        result = await self._db_session.execute(
-            select(self._table).where(self._table.id == entry_id)
-        )
-        entry = result.scalar_one_or_none()
-        if not entry or (entry.deleted_at is not None and not permanently):
+    async def delete_by_id(self, entry_id, permanently=False, raise_404=True) -> None:
+        stmt = delete(self._table).where(self._table.id == entry_id)
+        if not permanently:
+            stmt = self.apply_active_statement(
+                update(self._table).where(self._table.id == entry_id), True
+            ).values(deleted_at=func.current_timestamp())
+
+        result = await self._db_session.execute(stmt)
+        if result.rowcount == 0 and raise_404:  # noqa
             raise HTTPException(status_code=404, detail="Object not found")
-
-        if permanently:
-            await self._db_session.delete(entry)
-        else:
-            entry.deleted_at = func.current_timestamp()
 
         await self._db_session.flush()
         return
@@ -133,7 +127,7 @@ class BaseCrud(
         if order_by is None:
             order_by = self.default_ordering
         result: Result = await self._db_session.execute(
-            self.get_active_statement(
+            self.apply_active_statement(
                 select(*self.out_schema_columns).select_from(self._table), active_only
             )
             .order_by(order_by)
@@ -142,7 +136,7 @@ class BaseCrud(
         )
         entries = result.all()
         total_count: Result = await self._db_session.execute(
-            self.get_active_statement(
+            self.apply_active_statement(
                 select(func.count()).select_from(self._table), active_only
             )
         )

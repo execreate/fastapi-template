@@ -63,7 +63,8 @@ async def update_a_blog_post(
     db: DbSessionDep,
 ):
     crud = BlogPostCrud(db)
-    result = await crud.update_by_id(post_id, blog_post)
+    await crud.update_by_id(post_id, blog_post)
+    result = await crud.get_by_id(post_id)
     await crud.commit_session()
     return result
 
