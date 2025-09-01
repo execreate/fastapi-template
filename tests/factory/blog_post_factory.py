@@ -1,4 +1,5 @@
 from db.tables.blog_post import BlogPost as BlogPostTable
+
 from .base_factories import TimeStampedFactory
 
 

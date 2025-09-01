@@ -1,8 +1,8 @@
 import secrets
+
+from core.config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from core.config import settings
-
 
 basicSecurity = HTTPBasic()
 

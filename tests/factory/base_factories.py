@@ -1,5 +1,6 @@
-import factory
 from datetime import datetime
+
+import factory
 
 
 class TimeStampedFactory(factory.Factory):

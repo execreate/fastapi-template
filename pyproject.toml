@@ -1,0 +1,36 @@
+[project]
+name = "fastapi-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12, <4.0"
+dependencies = [
+    "alembic>=1.16.5",
+    "fastapi>=0.116.1",
+    "greenlet>=3.2.4",
+    "psycopg>=3.2.9",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "sqlalchemy>=2.0.43",
+    "tenacity>=9.1.2",
+    "uvicorn>=0.35.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "factory-boy>=3.3.3",
+    "httpx>=0.28.1",
+    "isort>=6.0.1",
+    "pip>=25.2", # otherwise PyCharm does not detect installed packages
+    "pytest-asyncio>=1.1.0",
+    "ruff>=0.12.11",
+]
+
+[tool.uv]
+required-environments = [
+    "sys_platform == 'darwin' and platform_machine == 'x86_64'",
+    "sys_platform == 'darwin' and platform_machine == 'aarch64'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64'",
+]

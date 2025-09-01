@@ -1,10 +1,10 @@
-import re
 import datetime
+import re
 from typing import Optional
 
+from core.config import EnvironmentEnum, settings
 from sqlalchemy import func
-from sqlalchemy.orm import as_declarative, declared_attr, mapped_column, Mapped
-from core.config import settings, EnvironmentEnum
+from sqlalchemy.orm import Mapped, as_declarative, declared_attr, mapped_column
 
 
 def camel_to_snake(name):

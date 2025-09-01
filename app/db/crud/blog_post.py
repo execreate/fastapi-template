@@ -1,15 +1,14 @@
 from typing import Type
 
-from sqlalchemy.sql.elements import UnaryExpression
-
 from db.crud.base import BaseCrud
 from db.tables.blog_post import BlogPost as BlogPostTable
 from schemas.blog_post import (
     InBlogPostSchema,
-    UpdateBlogPostSchema,
     OutBlogPostSchema,
     PaginatedBlogPostSchema,
+    UpdateBlogPostSchema,
 )
+from sqlalchemy.sql.elements import UnaryExpression
 
 
 class BlogPostCrud(

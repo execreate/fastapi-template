@@ -1,6 +1,5 @@
-from sqlalchemy.orm import Mapped, mapped_column
-
 from db.base_class import TimestampedBase
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class BlogPost(TimestampedBase):

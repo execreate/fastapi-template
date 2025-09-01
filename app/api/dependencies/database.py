@@ -1,10 +1,12 @@
-from typing import Annotated
+from typing import Annotated, Any, AsyncGenerator
+
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from db.session import async_session
 
 
-async def get_db_session() -> AsyncSession:
+async def get_db_session() -> AsyncGenerator[Any, Any]:
     """
     Dependency function that yields db sessions
     """

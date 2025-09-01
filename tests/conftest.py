@@ -1,14 +1,16 @@
-from .setup_env import *  # noqa: setup test env
 import asyncio
+from typing import Callable, Generator, Any, AsyncGenerator
+
 import pytest_asyncio
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Generator, Callable
+
 from core.config import settings
 from db.base import Base
 from db.session import async_session
+from .setup_env import *  # noqa: setup test env
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
@@ -40,7 +42,7 @@ def event_loop(request) -> Generator:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def db_session() -> AsyncSession:
+async def db_session() -> AsyncGenerator[Any, Any]:
     async with async_session() as session:
         yield session
         await session.rollback()
@@ -56,14 +58,16 @@ def override_get_session(db_session: AsyncSession) -> Callable:
 
 @pytest_asyncio.fixture(scope="function")
 def app_(override_get_session: Callable) -> FastAPI:
-    from main import app
     from api.dependencies.database import get_db_session
+    from main import app
 
     app.dependency_overrides[get_db_session] = override_get_session
     return app
 
 
 @pytest_asyncio.fixture(scope="function")
-async def async_client(app_: FastAPI) -> AsyncClient:
-    async with AsyncClient(app=app_, base_url="http://localhost") as client:
+async def async_client(app_: FastAPI) -> AsyncGenerator[AsyncClient, Any]:
+    async with AsyncClient(
+        transport=ASGITransport(app=app_), base_url="http://localhost"
+    ) as client:
         yield client

@@ -1,16 +1,15 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+
+from fastapi import Depends, FastAPI
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.utils import get_openapi
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
-from core.config import settings
-from api.dependencies.docs_security import basic_http_credentials
-
-from db.session import engine
-
 from api import v1
+from api.dependencies.docs_security import basic_http_credentials
+from core.config import settings
+from db.session import engine
 
 description = """
 FastAPI template project 🚀

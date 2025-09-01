@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict
 from typing import Generic, TypeVar
+
+from pydantic import BaseModel, ConfigDict
 
 
 class BaseSchema(BaseModel):

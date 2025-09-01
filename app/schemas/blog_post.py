@@ -1,5 +1,6 @@
 from datetime import datetime
-from schemas.base import BaseSchema, BasePaginatedSchema
+
+from schemas.base import BasePaginatedSchema, BaseSchema
 
 
 class BlogPostSchemaBase(BaseSchema):
@@ -12,8 +13,7 @@ class UpdateBlogPostSchema(BaseSchema):
     body: str = ""
 
 
-class InBlogPostSchema(BlogPostSchemaBase):
-    ...
+class InBlogPostSchema(BlogPostSchemaBase): ...
 
 
 class OutBlogPostSchema(BlogPostSchemaBase):
@@ -22,5 +22,4 @@ class OutBlogPostSchema(BlogPostSchemaBase):
     updated_at: datetime
 
 
-class PaginatedBlogPostSchema(BasePaginatedSchema[OutBlogPostSchema]):
-    items: list[OutBlogPostSchema]
+class PaginatedBlogPostSchema(BasePaginatedSchema[OutBlogPostSchema]): ...

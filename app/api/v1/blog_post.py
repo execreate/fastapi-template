@@ -1,9 +1,8 @@
 from api.dependencies.database import DbSessionDep
 from api.dependencies.pagination import PaginationDep
+from db.crud.blog_post import BlogPostCrud
 from fastapi import APIRouter, Response, status
 from schemas import blog_post as blog_post_schemas
-from db.crud.blog_post import BlogPostCrud
-
 
 router = APIRouter(
     prefix="/blog",

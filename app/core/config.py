@@ -27,18 +27,19 @@ class GlobalSettings(BaseSettings):
     ENVIRONMENT: EnvironmentEnum
     DEBUG: bool = False
 
-    DATABASE_URL: Optional[PostgresDsn] = "postgresql://user:pass@localhost:5434/my_db"
+    DATABASE_URL: Optional[PostgresDsn] = (
+        "postgresql+psycopg://user:pass@localhost:5434/my_db"
+    )
     DB_ECHO_LOG: bool = False
 
-    @property
-    def async_database_url(self) -> Optional[str]:
-        return (
-            str(self.DATABASE_URL).replace("postgresql://", "postgresql+asyncpg://")
-            if self.DATABASE_URL
-            else str(self.DATABASE_URL)
-        )
-
-    model_config = SettingsConfigDict(case_sensitive=True)
+    model_config = SettingsConfigDict(
+        extra="allow",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        # E.g. To set a value inside openai.api_key field
+        # define OPENAI__API_KEY in .env
+        env_nested_delimiter="__",
+    )
 
 
 class TestSettings(GlobalSettings):

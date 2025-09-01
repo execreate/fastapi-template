@@ -1,46 +1,51 @@
-FROM python:3.10-bullseye as base
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+
+# Disable Python downloads, because we want to use the system interpreter
+# across both images. If using a managed Python version, it needs to be
+# copied from the build image into the final image; see `standalone.Dockerfile`
+# for an example.
+ENV UV_PYTHON_DOWNLOADS=0
+
+WORKDIR /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
+COPY pyproject.toml uv.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
+
+
+FROM python:3.12.11-slim-bookworm
+# It is important to use the image that matches the builder, as the path to the
+# Python executable must be the same, e.g., using `python:3.11-slim-bookworm` will fail.
 
 # Set environment variables
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONFAULTHANDLER 1
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONFAULTHANDLER=1
 
-FROM base as builder
+WORKDIR /app
+RUN useradd app && apt-get update && \
+    apt-get install libpq-dev -y  # need it for psycopg
 
-# install dependencies
-RUN apt-get update
-RUN apt-get install -y gcc musl-dev libpq-dev libffi-dev zlib1g-dev g++ libev-dev git build-essential \
-    libev4 ca-certificates mailcap debian-keyring debian-archive-keyring apt-transport-https
+# Copy the virtual environment from the builder
+COPY --from=builder --chown=app:app /app/.venv ./.venv/
 
-RUN pip3 install -U pip
-RUN pip3 install pipenv=="2023.4.20"
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
 
-COPY Pipfile .
-COPY Pipfile.lock .
+# Copy the application files
+COPY ./app ./
 
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
-
-FROM base as runtime
-
-WORKDIR /usr/src/app/
-
-COPY --from=builder /.venv /.venv
-ENV PATH="/.venv/bin:$PATH"
-
-RUN groupadd -g 1000 app && \
-    useradd -r -u 1000 -g app app
-
-RUN mkdir "/home/app"
-RUN	chown -R app:app /home/app
-
-COPY ./app /usr/src/app/
-RUN	chown -R app:app /usr/src/app/
-RUN chmod +x /usr/src/app/entrypoint.sh
+RUN	chown -R app:app /app/
+RUN chmod +x /app/entrypoint.sh
 
 USER app
-
 EXPOSE 8080
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
-CMD [ "gunicorn", "main:app", "--workers", "8", "--worker-class", \
-		"uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8080" ]
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "main:app"]

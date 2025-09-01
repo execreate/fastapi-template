@@ -1,11 +1,10 @@
-import logging
 import asyncio
+import logging
 
-from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
-from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.sql import text
-from core.config import settings
+from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
 
+from db.session import async_session
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,14 +21,12 @@ wait_seconds = 2
 )
 async def init() -> None:
     try:
-        engine = create_async_engine(settings.async_database_url)
-        async with engine.connect() as conn:
+        async with async_session() as session:
             # Try to create session to check if DB is awake
-            await conn.execute(text("SELECT 1"))
+            await session.execute(text("SELECT 1"))
     except Exception as e:
         logger.error(e)
         raise e
-    await engine.dispose()
 
 
 async def main() -> None:

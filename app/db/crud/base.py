@@ -1,23 +1,26 @@
 import abc
 import logging
-from typing import Generic, TypeVar, Type
-from fastapi import HTTPException
+from typing import Generic, Type, TypeVar
 
-from sqlalchemy import func, column, ColumnClause, update, delete
+from fastapi import HTTPException
+from sqlalchemy import ColumnClause, column, delete, func, update
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.elements import UnaryExpression
 from sqlalchemy.future import select
 from sqlalchemy.orm import InstrumentedAttribute
-from core.config import settings, EnvironmentEnum
+from sqlalchemy.sql import Select, Update
+from sqlalchemy.sql.elements import UnaryExpression
+
+from core.config import EnvironmentEnum, settings
 from db.base_class import TimestampedBase
-from schemas.base import BaseSchema, BasePaginatedSchema
+from schemas.base import BasePaginatedSchema, BaseSchema
 
 IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
 OUT_SCHEMA = TypeVar("OUT_SCHEMA", bound=BaseSchema)
 PARTIAL_UPDATE_SCHEMA = TypeVar("PARTIAL_UPDATE_SCHEMA", bound=BaseSchema)
 PAGINATED_SCHEMA = TypeVar("PAGINATED_SCHEMA", bound=BasePaginatedSchema)
 TABLE = TypeVar("TABLE", bound=TimestampedBase)
+S = TypeVar("S", Select, Update)
 
 
 logger = logging.getLogger(__name__)
@@ -41,30 +44,26 @@ class BaseCrud(
 
         await self._db_session.commit()
 
-    def apply_active_statement(self, stmt: any, active_only: bool):
+    def apply_active_statement(self, stmt: S, active_only: bool) -> S:
         if active_only:
             return stmt.where(self._table.deleted_at.is_(None))
         return stmt
 
     @property
     @abc.abstractmethod
-    def _table(self) -> Type[TABLE]:
-        ...
+    def _table(self) -> Type[TABLE]: ...
 
     @property
     @abc.abstractmethod
-    def _out_schema(self) -> Type[OUT_SCHEMA]:
-        ...
+    def _out_schema(self) -> Type[OUT_SCHEMA]: ...
 
     @property
     @abc.abstractmethod
-    def default_ordering(self) -> InstrumentedAttribute:
-        ...
+    def default_ordering(self) -> InstrumentedAttribute: ...
 
     @property
     @abc.abstractmethod
-    def _paginated_schema(self) -> Type[PAGINATED_SCHEMA]:
-        ...
+    def _paginated_schema(self) -> Type[PAGINATED_SCHEMA]: ...
 
     @property
     def out_schema_columns(self) -> list[ColumnClause]:
