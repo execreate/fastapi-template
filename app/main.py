@@ -4,7 +4,6 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.utils import get_openapi
-from starlette.middleware.cors import CORSMiddleware
 
 from api import v1
 from api.dependencies.docs_security import basic_http_credentials
@@ -72,10 +71,7 @@ async def get_redoc_documentation():
     )
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["Content-Type", "Accept-Language"],
-)
+@app.get("/health")
+@app.head("/health")
+async def health_check() -> str:
+    return "OK"

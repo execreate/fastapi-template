@@ -3,7 +3,7 @@ from enum import Enum
 from functools import lru_cache
 from typing import Optional, Set
 
-from pydantic import AnyHttpUrl, PostgresDsn
+from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,8 +21,7 @@ class GlobalSettings(BaseSettings):
     DOCS_USERNAME: str = "docs_user"
     DOCS_PASSWORD: str = "simple_password"
 
-    TRUSTED_HOSTS: Set[str] = {"app", "localhost", "0.0.0.0"}
-    BACKEND_CORS_ORIGINS: Set[AnyHttpUrl] = set()
+    TRUSTED_HOSTS: Set[str] = {"app", "localhost", "0.0.0.0", "127.0.0.1"}
 
     ENVIRONMENT: EnvironmentEnum
     DEBUG: bool = False

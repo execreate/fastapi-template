@@ -10,6 +10,12 @@ services:
       - DB_ECHO_LOG=1
     ports:
       - "8080:8080"
+    restart: on-failure
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
   postgres_db:
     image: bitnami/postgresql:latest
@@ -19,3 +25,9 @@ services:
       - POSTGRESQL_DATABASE=my_db
     ports:
       - "5434:5432"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 3s
+      retries: 10
