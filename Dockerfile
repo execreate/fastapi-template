@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project --no-dev
 COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev
+    uv sync --locked --no-dev --group=telemetry
 
 
 FROM python:3.12-slim-bookworm
@@ -53,4 +53,4 @@ HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "main:app"]
+CMD ["python", "main.py"]

@@ -35,7 +35,7 @@ class GlobalSettings(BaseSettings):
         extra="allow",
         env_file=".env",
         env_file_encoding="utf-8",
-        # E.g. To set a value inside openai.api_key field
+        # E.g. To set a value inside the openai.api_key field,
         # define OPENAI__API_KEY in .env
         env_nested_delimiter="__",
     )

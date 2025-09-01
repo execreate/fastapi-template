@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
@@ -10,6 +11,9 @@ from api.dependencies.docs_security import basic_http_credentials
 from core.config import settings
 from db.session import engine
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 description = """
 FastAPI template project 🚀
 """
@@ -18,6 +22,17 @@ version = "v0.0.1"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import os, sys
+
+    if "PYTHONPATH" not in os.environ:
+        os.environ["PYTHONPATH"] = ":".join(sys.path)
+    try:
+        import opentelemetry.instrumentation.auto_instrumentation.sitecustomize  # noqa
+
+        logger.debug("OpenTelemetry initialized")
+    except ImportError:
+        logger.warning("OpenTelemetry not initialized!")
+
     yield
     await engine.dispose()
 
@@ -75,3 +90,9 @@ async def get_redoc_documentation():
 @app.head("/health")
 async def health_check() -> str:
     return "OK"
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8080, log_level=logging.DEBUG)

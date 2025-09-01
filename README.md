@@ -12,6 +12,7 @@ A simple starting point for your [FastAPI](https://fastapi.tiangolo.com) applica
 5. CRUD operations generic class with pagination
 6. Support for API versioning (`https://api.yourdomain.com/v1/`)
 7. Async testing suite with Pytest
+8. [ClickStack](https://clickhouse.com/use-cases/observability) integration for telemetry
 
 ## Start coding
 
@@ -52,3 +53,13 @@ docker compose up -d
 If you run the code without any changes, you'll find the
 [documentation page here](http://localhost:8001/docs). The default username is `docs_user`
 and the password is `simple_password`.
+
+### Telemetry
+
+After you add new dependencies, run the following command to also add opentelemetry instruments:
+
+```shell
+uv add --group telemetry $(opentelemetry-bootstrap -a requirements)
+```
+
+This template uses [ClickStack](https://clickhouse.com/use-cases/observability).
