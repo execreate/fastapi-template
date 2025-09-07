@@ -1,18 +1,18 @@
 # FastAPI template
 
-A simple starting point for your [FastAPI](https://fastapi.tiangolo.com) application.
+A starting point for your [FastAPI](https://fastapi.tiangolo.com) application.
 
 ## Features
 
-1. UV for dependency management. Simply run `uv sync` to install get started, read more about UV
+1. UV for dependency management. Simply run `uv sync` to setup your env, read more about UV
    at https://docs.astral.sh/uv/
 2. Docker compose for local development and testing
 3. SQLAlchemy for ORM (uses async engine) and Alembic for database migrations
-4. Simple authentication for docs page
+4. Simple authentication for docs page (to showcase how auth can be handled in a FastAPI app)
 5. CRUD operations generic class with pagination
 6. Support for API versioning (`https://api.yourdomain.com/v1/`)
 7. Async testing suite with Pytest
-8. [ClickStack](https://clickhouse.com/use-cases/observability) integration for telemetry
+8. [ClickStack](https://clickhouse.com/use-cases/observability) integration for logs and metrics
 
 ## Start coding
 
