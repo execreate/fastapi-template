@@ -92,7 +92,35 @@ async def health_check() -> str:
     return "OK"
 
 
+def register_log_filter() -> None:
+    """
+    Removes logs from healthiness/readiness endpoints so they don't spam
+    and pollute the application log flow
+    """
+
+    class EndpointFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            request_method: str = record.args[1]
+            # complete query string (so parameter and other value included):
+            query_string: str = record.args[2]
+
+            # other params if ever necessary in the future:
+            # remote_address = record.args[0]
+            # html_version = record.args[3]
+            # status_code = record.args[4]
+
+            is_health_check = request_method in [
+                "GET",
+                "HEAD",
+            ] and query_string.startswith("/health")
+
+            return not is_health_check
+
+    logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
+
+
 if __name__ == "__main__":
     import uvicorn
 
+    register_log_filter()
     uvicorn.run(app, host="0.0.0.0", port=8080, log_level=logging.DEBUG)
