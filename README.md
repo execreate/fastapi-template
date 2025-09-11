@@ -17,14 +17,15 @@ A nice starting point for your [FastAPI](https://fastapi.tiangolo.com) applicati
     - Go to the `app/` directory and run `alembic revision --autogenerate -m "my message"` to create a new migration
     - Run `alembic upgrade head` to apply the migration
     - Run `alembic downgrade -1` to revert the migration
-4. Simple authentication for the documentation page
+4. Basic authentication for the documentation page
     - Simply showcasing how auth can be handled in a FastAPI app
     - The API endpoints themselves are not protected!
     - Access the docs page at http://localhost:8080/docs, default login credentials are `docs_user` and
       `simple_password`
 5. CRUD operations generic class with pagination
     - Check out the [CRUD factory](app/db/crud/base.py) for more details
-    - The [blog post example](app/api/v1/blog_post.py) is a good starting point for your own CRUD operations
+    - The [blog post example](app/db/crud/blog_post.py) is a good starting point to see
+      it [in action](app/api/v1/blog_post.py)
 6. Async testing suite with Pytest
     - Before running unit tests you must start the database with `docker compose up -d db`
     - Run `ENVIRONMENT=test uv run pytest` to run the tests
@@ -33,8 +34,7 @@ A nice starting point for your [FastAPI](https://fastapi.tiangolo.com) applicati
       names [the SQL Alchemy base class](app/db/base_class.py)
 7. [ClickStack](https://clickhouse.com/use-cases/observability) integration for logs and metrics
     - Logs are already correlated with traces, so you get a nice overview of your backend operations
-    - You must use [the logging setup](app/logging_setup.py) for your logs to be properly collected by OpenTelemetry
-      and sent to the collector
+    - You must use [the logging setup](app/logging_setup.py) for your logs to be properly exported to the OTEL collector
     - In any given file you'd do `from logging_setup import setup_gunicorn_logging` and then
       `logger = setup_gunicorn_logging(__name__)`
     - Logs in this demo app are for demo purposes only, make sure to review them when coding your own logic
