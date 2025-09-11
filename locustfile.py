@@ -26,7 +26,7 @@ class BlogApiUser(HttpUser):
     Locust user that exercises the blog API.
 
     How to run locally (examples):
-      locust -f simulation.py --headless -u 10 -r 2 -t 1m --host=http://localhost:8080
+      locust --headless -u 10 -r 2 -t 1m --host=http://localhost:8080
 
     You can also set LOCUST_HOST env var instead of passing --host.
     """
