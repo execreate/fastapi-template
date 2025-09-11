@@ -1,15 +1,15 @@
 import asyncio
-from typing import Callable, Generator, Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Callable, Generator
 
 import pytest_asyncio
-from fastapi import FastAPI
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy.engine import create_engine
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.config import settings
 from db.base import Base
 from db.session import async_session
+from fastapi import FastAPI
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.engine import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from .setup_env import *  # noqa: setup test env
 
 

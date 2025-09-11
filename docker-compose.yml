@@ -4,18 +4,13 @@ services:
     depends_on:
       postgres_db:
         condition: service_healthy
-      hyperdx:
+      clickstack:
         condition: service_started
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: "postgresql+psycopg://user:pass@postgres_db:5432/my_db"
-      DB_ECHO_LOG: "1"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://hyperdx:4318"
-      OTEL_SERVICE_NAME: "fastapi-template"
-      HYPERDX_ENABLE_ADVANCED_NETWORK_CAPTURE: "1"
-      HYPERDX_API_KEY: "put-your-api-key-here"  # CHANGE: get it from hyperdx and replace
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     restart: on-failure
@@ -40,7 +35,7 @@ services:
       timeout: 3s
       retries: 10
 
-  hyperdx:
+  clickstack:
     image: docker.hyperdx.io/hyperdx/hyperdx-all-in-one:latest
     ports:
       - '8081:8080' # HyperDX UI

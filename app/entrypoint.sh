@@ -3,6 +3,8 @@
 set -Eeuo pipefail
 
 # Let the DB start
-python3 backend_pre_start.py
+opentelemetry-instrument python backend_pre_start.py
+
+alembic upgrade head
 
 exec "$@"

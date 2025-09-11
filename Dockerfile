@@ -37,7 +37,7 @@ RUN useradd app; \
 COPY --from=builder --chown=app:app /app/.venv ./.venv/
 
 # Place executables in the environment at the front of the path
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:${PATH}"
 
 # Copy the application files
 COPY --chown=app:app ./app ./
@@ -53,4 +53,9 @@ HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-CMD ["python", "main.py"]
+ENV PROCESS_WORKERS="4"
+
+CMD opentelemetry-instrument gunicorn main:app \
+    --bind=0.0.0.0:8080 \
+    --worker-class=uvicorn.workers.UvicornWorker \
+    --workers=${PROCESS_WORKERS}

@@ -1,18 +1,13 @@
-import logging
 from contextlib import asynccontextmanager
-
-from fastapi import Depends, FastAPI
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.openapi.docs import get_redoc_html
-from fastapi.openapi.utils import get_openapi
 
 from api import v1
 from api.dependencies.docs_security import basic_http_credentials
 from core.config import settings
 from db.session import engine
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+from fastapi import Depends, FastAPI
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.openapi.docs import get_redoc_html
+from fastapi.openapi.utils import get_openapi
 
 description = """
 FastAPI template project 🚀
@@ -22,17 +17,6 @@ version = "v0.0.1"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    import os, sys
-
-    if "PYTHONPATH" not in os.environ:
-        os.environ["PYTHONPATH"] = ":".join(sys.path)
-    try:
-        import opentelemetry.instrumentation.auto_instrumentation.sitecustomize  # noqa
-
-        logger.debug("OpenTelemetry initialized")
-    except ImportError:
-        logger.warning("OpenTelemetry not initialized!")
-
     yield
     await engine.dispose()
 
@@ -92,35 +76,7 @@ async def health_check() -> str:
     return "OK"
 
 
-def register_log_filter() -> None:
-    """
-    Removes logs from healthiness/readiness endpoints so they don't spam
-    and pollute the application log flow
-    """
-
-    class EndpointFilter(logging.Filter):
-        def filter(self, record: logging.LogRecord) -> bool:
-            request_method: str = record.args[1]
-            # complete query string (so parameter and other value included):
-            query_string: str = record.args[2]
-
-            # other params if ever necessary in the future:
-            # remote_address = record.args[0]
-            # html_version = record.args[3]
-            # status_code = record.args[4]
-
-            is_health_check = request_method in [
-                "GET",
-                "HEAD",
-            ] and query_string.startswith("/health")
-
-            return not is_health_check
-
-    logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
-
-
 if __name__ == "__main__":
     import uvicorn
 
-    register_log_filter()
-    uvicorn.run(app, host="0.0.0.0", port=8080, log_level=logging.DEBUG)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

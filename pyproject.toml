@@ -8,6 +8,7 @@ dependencies = [
     "alembic>=1.16.5",
     "fastapi>=0.116.1",
     "greenlet>=3.2.4",
+    "gunicorn>=23.0.0",
     "psycopg>=3.2.10",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
@@ -24,11 +25,16 @@ dev = [
     "isort>=6.0.1",
     "pip>=25.2", # otherwise PyCharm does not detect installed packages
     "pytest-asyncio>=1.1.0",
-    "ruff>=0.12.12",
+    "ruff>=0.13.0",
+]
+
+load-testing = [
+    "locust>=2.40.2",
 ]
 
 telemetry = [
     "hyperdx-opentelemetry>=0.3.0",
+    "opentelemetry-instrumentation-asgi==0.51b0",
     "opentelemetry-instrumentation-asyncio==0.51b0",
     "opentelemetry-instrumentation-click==0.51b0",
     "opentelemetry-instrumentation-dbapi==0.51b0",
@@ -41,6 +47,7 @@ telemetry = [
     "opentelemetry-instrumentation-sqlalchemy==0.51b0",
     "opentelemetry-instrumentation-sqlite3==0.51b0",
     "opentelemetry-instrumentation-starlette==0.51b0",
+    "opentelemetry-instrumentation-system-metrics==0.51b0",
     "opentelemetry-instrumentation-threading==0.51b0",
     "opentelemetry-instrumentation-tortoiseorm==0.51b0",
     "opentelemetry-instrumentation-urllib==0.51b0",
