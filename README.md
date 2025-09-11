@@ -71,7 +71,7 @@ from app.core.config import settings
 
 The Dockerfile is also configured to copy over only the `app/` folder.
 
-## Telemetry
+## OpenTelemetry instrumentation
 
 To include instrumentation for your new dependencies, you can use the `opentelemetry-bootstrap` command:
 
