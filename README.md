@@ -47,7 +47,7 @@ A nice starting point for your [FastAPI](https://fastapi.tiangolo.com) applicati
 4. The run `docker compose up` to start the database and the app
 5. Run [Locust](https://locust.io) for load tests (another reminder that the `locustfile.py` was vibe-coded, feel free
    to adapt it)
-6. Open http://localhost:8009 to access Locust UI. Set the host parameter to the backend URL `http://localhost:8080`,
+6. Open http://localhost:8089 to access Locust UI. Set the host parameter to the backend URL `http://localhost:8080`,
    adjust other parameters and start the test
 7. You should see the logs and traces coming in from the backend on ClickStack UI at http://localhost:8081
 
