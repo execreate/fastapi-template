@@ -44,7 +44,7 @@ A nice starting point for your [FastAPI](https://fastapi.tiangolo.com) applicati
 1. Clone this app and copy-paste the content from `.env.example` to `.env`
 2. Run `docker compose up -d clickstack`
 3. Open http://localhost:8081, set up your ClickStack user and copy the ingestion API key into your `.env`
-4. The run `docker compose up` to start the database and the app
+4. The run `docker compose up -d` to start the database and the app
 5. Run [Locust](https://locust.io) for load tests (another reminder that the `locustfile.py` was vibe-coded, feel free
    to adapt it)
 6. Open http://localhost:8089 to access Locust UI. Set the host parameter to the backend URL `http://localhost:8080`,
