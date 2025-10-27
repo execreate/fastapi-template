@@ -1,13 +1,14 @@
 from contextlib import asynccontextmanager
 
-from api import v1
-from api.dependencies.docs_security import basic_http_credentials
-from core.config import settings
-from db.session import engine
 from fastapi import Depends, FastAPI
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.utils import get_openapi
+
+from api import v1
+from api.dependencies.docs_security import basic_http_credentials
+from core.config import settings
+from db.session import engine
 
 description = """
 FastAPI template project 🚀
@@ -16,7 +17,7 @@ version = "v0.0.1"
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     yield
     await engine.dispose()
 
