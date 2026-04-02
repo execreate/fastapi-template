@@ -1,8 +1,9 @@
+from fastapi import APIRouter, Response, status
+
 from api.dependencies.database import DbSessionDep
 from api.dependencies.pagination import PaginationDep
 from db.crud.blog_post import BlogPostCrud
-from fastapi import APIRouter, Response, status
-from logging_setup import setup_gunicorn_logging
+from logging_setup import setup_logging
 from schemas import blog_post as blog_post_schemas
 
 router = APIRouter(
@@ -10,7 +11,7 @@ router = APIRouter(
     tags=["Blog posts"],
 )
 
-logger = setup_gunicorn_logging(__name__)
+logger = setup_logging(__name__)
 
 
 @router.post("", status_code=201, response_model=blog_post_schemas.OutBlogPostSchema)

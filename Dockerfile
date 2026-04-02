@@ -53,9 +53,4 @@ HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-ENV PROCESS_WORKERS="4"
-
-CMD opentelemetry-instrument gunicorn main:app \
-    --bind=0.0.0.0:8080 \
-    --worker-class=uvicorn.workers.UvicornWorker \
-    --workers=${PROCESS_WORKERS}
+CMD ["opentelemetry-instrument", "uvicorn", "main:app", "--host=0.0.0.0", "--port=8080"]

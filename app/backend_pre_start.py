@@ -1,12 +1,13 @@
 import asyncio
 import logging
 
-from db.session import async_session
 from sqlalchemy.sql import text
 from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from db.session import async_session
+from logging_setup import setup_logging
+
+logger = setup_logging("backend_pre_start")
 
 max_tries = 30 * 5  # 5 minutes
 wait_seconds = 2
@@ -24,7 +25,7 @@ async def init() -> None:
             # Try to create a session to check if DB is awake
             await session.execute(text("SELECT 1"))
     except Exception as e:
-        logger.error(e)
+        logger.error("failed to connect to the database", exc_info=e)
         raise e
 
 

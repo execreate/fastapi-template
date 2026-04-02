@@ -9,11 +9,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
+    environment:
+      ENVIRONMENT: "production"
+      DATABASE_URL: "postgresql+psycopg://user:pass@postgres_db:5432/my_db"
+      HYPERDX_ENABLE_ADVANCED_NETWORK_CAPTURE: "1"
+      OTEL_PYTHON_LOG_AUTO_INSTRUMENTATION: "true"
+      OTEL_PYTHON_LOG_CORRELATION: "true"
+      OTEL_PYTHON_LOG_FORMAT: "%(asctime)s | [%(levelname)s] | [%(name)s] %(message)s"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://clickstack:4318"
+      OTEL_SERVICE_NAME: "fastapi-template"
+      HYPERDX_API_KEY: "${HYPERDX_API_KEY:-}"
     ports:
       - "8080:8080"
-    restart: on-failure
+    restart: no
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
       interval: 3s
@@ -21,14 +29,16 @@ services:
       retries: 10
 
   postgres_db:
-    image: bitnami/postgresql:latest
+    image: postgres:17
     environment:
-      POSTGRESQL_USERNAME: "user"
-      POSTGRESQL_PASSWORD: "pass"
-      POSTGRESQL_DATABASE: "my_db"
-    ports:
-      - "5434:5432"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "pass"
+      POSTGRES_DB: "my_db"
     restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U user -d my_db" ]
       interval: 3s
@@ -36,8 +46,11 @@ services:
       retries: 10
 
   clickstack:
-    image: docker.hyperdx.io/hyperdx/hyperdx-all-in-one:latest
+    image: clickhouse/clickstack-local:latest
     ports:
       - '8081:8080' # HyperDX UI
       - '4317:4317' # OTLP gRPC receiver
       - '4318:4318' # OTLP http receiver
+
+volumes:
+  postgres_data:

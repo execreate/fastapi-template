@@ -1,11 +1,7 @@
 import abc
 from typing import Generic, Type, TypeVar
 
-from core.config import EnvironmentEnum, settings
-from db.base_class import TimestampedBase
 from fastapi import HTTPException
-from logging_setup import setup_gunicorn_logging
-from schemas.base import BasePaginatedSchema, BaseSchema
 from sqlalchemy import ColumnClause, column, delete, func, update
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +10,11 @@ from sqlalchemy.orm import InstrumentedAttribute
 from sqlalchemy.sql import Select, Update
 from sqlalchemy.sql.elements import UnaryExpression
 
+from core.config import EnvironmentEnum, settings
+from db.base_class import TimestampedBase
+from logging_setup import setup_logging
+from schemas.base import BasePaginatedSchema, BaseSchema
+
 IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
 OUT_SCHEMA = TypeVar("OUT_SCHEMA", bound=BaseSchema)
 PARTIAL_UPDATE_SCHEMA = TypeVar("PARTIAL_UPDATE_SCHEMA", bound=BaseSchema)
@@ -21,7 +22,7 @@ PAGINATED_SCHEMA = TypeVar("PAGINATED_SCHEMA", bound=BasePaginatedSchema)
 TABLE = TypeVar("TABLE", bound=TimestampedBase)
 S = TypeVar("S", Select, Update)
 
-logger = setup_gunicorn_logging(__name__)
+logger = setup_logging(__name__)
 
 
 class BaseCrud(

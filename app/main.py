@@ -9,7 +9,9 @@ from api import v1
 from api.dependencies.docs_security import basic_http_credentials
 from core.config import settings
 from db.session import engine
+from logging_setup import setup_logging
 
+logger = setup_logging(__name__)
 description = """
 FastAPI template project 🚀
 """
@@ -80,4 +82,5 @@ async def health_check() -> str:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    logger.info("Starting local development server with hot reload")
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True, log_level="debug")

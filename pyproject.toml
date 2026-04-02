@@ -5,27 +5,26 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12, <4.0"
 dependencies = [
-    "alembic>=1.16.5",
-    "fastapi>=0.116.1",
-    "greenlet>=3.2.4",
-    "gunicorn>=23.0.0",
-    "psycopg>=3.2.10",
-    "pydantic>=2.11.7",
-    "pydantic-settings>=2.10.1",
-    "sqlalchemy>=2.0.43",
-    "tenacity>=9.1.2",
-    "uvicorn>=0.35.0",
+    "alembic>=1.18.4",
+    "fastapi>=0.135.3",
+    "greenlet>=3.3.2",
+    "psycopg>=3.3.3",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "sqlalchemy>=2.0.48",
+    "tenacity>=9.1.4",
+    "uvicorn>=0.42.0",
 ]
 
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
+    "black>=26.3.1",
     "factory-boy>=3.3.3",
     "httpx>=0.28.1",
-    "isort>=6.0.1",
-    "pip>=25.2", # otherwise PyCharm does not detect installed packages
-    "pytest-asyncio>=1.1.0",
-    "ruff>=0.13.0",
+    "isort>=8.0.1",
+    "pip>=26.0.1", # otherwise PyCharm does not detect installed packages
+    "pytest-asyncio>=1.3.0",
+    "ruff>=0.15.8",
 ]
 
 load-testing = [
@@ -53,12 +52,4 @@ telemetry = [
     "opentelemetry-instrumentation-urllib==0.51b0",
     "opentelemetry-instrumentation-urllib3==0.51b0",
     "opentelemetry-instrumentation-wsgi==0.51b0",
-]
-
-[tool.uv]
-required-environments = [
-    "sys_platform == 'darwin' and platform_machine == 'x86_64'",
-    "sys_platform == 'darwin' and platform_machine == 'aarch64'",
-    "sys_platform == 'linux' and platform_machine == 'x86_64'",
-    "sys_platform == 'linux' and platform_machine == 'aarch64'",
 ]
