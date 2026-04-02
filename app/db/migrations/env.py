@@ -1,9 +1,10 @@
 from logging.config import fileConfig
 
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+
 from core.config import settings  # noqa
 from db.base import Base  # noqa
-from sqlalchemy import engine_from_config, pool
 
 config = context.config
 config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
