@@ -14,17 +14,16 @@ logging.basicConfig(
     datefmt=logging_date_format,
 )
 
-formatter = logging.Formatter(fmt=logging_format, datefmt=logging_date_format)
 root = logging.getLogger()
 root.setLevel(logging_level)
+
+# set the formatter for the stdout handler
+formatter = logging.Formatter(fmt=logging_format, datefmt=logging_date_format)
 if root.handlers:
     root.handlers[0].setFormatter(formatter)
 
 
 def setup_logging(logger_name: str = None) -> logging.Logger:
-    """
-    Set up logging configuration
-    """
     app_logger = (
         logging.getLogger(logger_name) if logger_name else logging.getLogger("default")
     )
