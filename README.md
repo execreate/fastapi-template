@@ -22,12 +22,12 @@ A nice starting point for your [FastAPI](https://fastapi.tiangolo.com) applicati
     - The API endpoints themselves are not protected!
     - Access the docs page at http://localhost:8080/docs, default login credentials are `docs_user` and
       `simple_password`
-5. CRUD operations generic class with pagination
+5. CRUD operations generic class with pagination (repository pattern)
     - Check out the [CRUD factory](app/db/crud/base.py) for more details
     - The [blog post example](app/db/crud/blog_post.py) is a good starting point to see
       it [in action](app/api/v1/blog_post.py)
 6. Async testing suite with Pytest
-    - Before running unit tests you must start the database with `docker compose up -d db`
+    - Before running unit tests you must start the database with `docker compose up -d postgres_db`
     - Run `ENVIRONMENT=test uv run pytest` to run the tests
     - Having `ENVIRONMENT=test` in your env is pretty important here because it affects
       the [CRUD factory](app/db/crud/base.py) operations and database table
@@ -41,15 +41,14 @@ A nice starting point for your [FastAPI](https://fastapi.tiangolo.com) applicati
 
 ## Demo setup
 
-1. Clone this app and copy-paste the content from `.env.example` to `.env`
-2. Run `docker compose up -d clickstack`
-3. Open http://localhost:8081, set up your ClickStack user and copy the ingestion API key into your `.env`
-4. The run `docker compose up -d` to start the database and the app
-5. Run [Locust](https://locust.io) for load tests (another reminder that the `locustfile.py` was vibe-coded, feel free
+1. Run `docker compose up -d clickstack`
+2. Open http://localhost:8081, set up your ClickStack user and copy the ingestion API key into your `.env`
+3. The run `docker compose up -d` to start the database and the app
+4. Run [Locust](https://locust.io) for load tests (another reminder that the `locustfile.py` was vibe-coded, feel free
    to adapt it)
-6. Open http://localhost:8089 to access Locust UI. Set the host parameter to the backend URL `http://localhost:8080`,
+5. Open http://localhost:8089 to access Locust UI. Set the host parameter to the backend URL `http://localhost:8080`,
    adjust other parameters and start the test
-7. You should see the logs and traces coming in from the backend on ClickStack UI at http://localhost:8081
+6. You should see the logs and traces coming in from the backend on ClickStack UI at http://localhost:8081
 
 ## Project structure
 
