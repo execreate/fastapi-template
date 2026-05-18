@@ -23,7 +23,7 @@ if root.handlers:
     root.handlers[0].setFormatter(formatter)
 
 
-def setup_logging(logger_name: str = None) -> logging.Logger:
+def setup_logging(logger_name: str | None = None) -> logging.Logger:
     app_logger = (
         logging.getLogger(logger_name) if logger_name else logging.getLogger("default")
     )
